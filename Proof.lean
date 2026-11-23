@@ -4,7 +4,7 @@ import JSP473
 # Proof Entrypoint for JSP-000473 (Erdős Problem #584 — Duke, Erdős, and Rödl 1982/1984)
 
 Re-exports the formal definitions, positive theorems, structural obstructions, explicit
-counterexample family, and complete resolution of JSP-000473, and verifies that every theorem
+counterexample family, and 2026 resolution package for JSP-000473, and verifies that every theorem
 depends only on the standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 -/
 

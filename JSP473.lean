@@ -1190,11 +1190,13 @@ theorem exists_dense_three_path_bundle [Fintype V] (G : SimpleGraph V) [Decidabl
   have h2 : 512 * n ^ 4 ≤ 256 * n ^ 4 := hdense.trans (hM_bound.trans h1)
   omega
 
-/-- **Gao–Zhao Positive Theorem 1 (Proposition 2.6, arXiv:2610.34307):**
+/-- **Weakened Quantitative Version of Gao–Zhao Proposition 2.6 (arXiv:2610.34307):**
 Every finite simple graph `G` on `n` vertices with `e(G) > 0` and `512 * n⁴ ≤ e(G)³`
 contains an internally `C₆`-connected subgraph `H₁ ≤ G` (every two distinct edges of `H₁` lie
 on a common `C₄` or `C₆` inside `H₁`) with `e(G)³ ≤ 256 * n⁴ * e(H₁)`, i.e.
-`e(H₁) ≥ e(G)³ / (256 n⁴) = Ω(δ³ n²)`. -/
+`e(H₁) ≥ e(G)³ / (256 n⁴) = Ω(δ³ n²)`.
+(Factor-of-4 constant relaxation from the paper's `128 n⁴` / `64 n⁴` bounds due to the 3-path
+counting lemma, preserving the exact optimal range `β ≤ 2/3` and asymptotic order `Θ(δ³ n²)`.) -/
 theorem gao_zhao_internal_c6_connected_subgraph [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (hpos : 0 < G.edgeFinset.card)
     (hdense : 512 * (Fintype.card V) ^ 4 ≤ G.edgeFinset.card ^ 3) :
@@ -1210,11 +1212,12 @@ theorem gao_zhao_internal_c6_connected_subgraph [Fintype V] (G : SimpleGraph V)
   refine ⟨H₁, hDec, hle, ?_, hConn⟩
   exact hM_bound.trans (Nat.mul_le_mul_left (256 * (Fintype.card V) ^ 4) hcard)
 
-/-- **Gao–Zhao Positive Theorem 2 (Theorem 1.2, arXiv:2610.34307):**
+/-- **Corollary of Proposition 2.6 (Internal `C₈`-Connected Subgraph):**
 Every finite simple graph `G` on `n` vertices with `e(G) > 0` and `512 * n⁴ ≤ e(G)³`
 contains an internally `C₈`-connected subgraph `H₂ ≤ G` (every two distinct edges of `H₂` lie
 on a common cycle of length at most `8` inside `H₂`) with `e(G)³ ≤ 256 * n⁴ * e(H₂)`, i.e.
-`e(H₂) = Ω(δ³ n²)` (improving the Duke–Erdős–Rödl `δ¹² n²` bound to cubic density dependence). -/
+`e(H₂) = Ω(δ³ n²)` (immediate from `gao_zhao_internal_c6_connected_subgraph` since `C₆`-connectedness
+implies `C₈`-connectedness, improving the Duke–Erdős–Rödl `δ¹² n²` bound to cubic density dependence). -/
 theorem dense_internal_c8_connected_subgraph [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (hpos : 0 < G.edgeFinset.card)
     (hdense : 512 * (Fintype.card V) ^ 4 ≤ G.edgeFinset.card ^ 3) :
@@ -1226,11 +1229,13 @@ theorem dense_internal_c8_connected_subgraph [Fintype V] (G : SimpleGraph V)
     ⟨H₁, hDec, hle, hbound, hConn6⟩
   exact ⟨H₁, hDec, hle, hbound, hConn6.isC8Connected⟩
 
-/-- **Eric Li Positive Theorem (Theorem 1.3, arXiv:2606.06522):**
+/-- **Ambient Strong `C₆` Subgraph (Li Definition 1.1(ii), proved in Gao–Zhao's quantitative range):**
 Every finite simple graph `G` on `n` vertices with `e(G) > 0` and `512 * n⁴ ≤ e(G)³`
 contains a subgraph `H₁ ≤ G` with `e(G)³ ≤ 256 * n⁴ * e(H₁)` that is ambiently strongly
 `C₆`-connected in `G`: every two distinct edges of `H₁` lie on a common `C₄` or `C₆` in `G`,
-and every two distinct edges of `H₁` sharing a vertex lie on a common `C₄` in `G`. -/
+and every two distinct edges of `H₁` sharing a vertex lie on a common `C₄` in `G`.
+(Holds uniformly for all `n` up to `β ≤ 2/3` with `C₄`/`C₆` witnesses, implying Eric Li's
+asymptotic `β < 1/2` Theorem 1.3 in `arXiv:2606.06522`.) -/
 theorem li_ambient_strong_c6_subgraph [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (hpos : 0 < G.edgeFinset.card)
     (hdense : 512 * (Fintype.card V) ^ 4 ≤ G.edgeFinset.card ^ 3) :
@@ -1268,7 +1273,7 @@ lemma IsEightCycle.mono {G H : SimpleGraph V} (hle : H ≤ G) {v₁ v₂ v₃ v�
     hle h.2.2.2.2.2.1, hle h.2.2.2.2.2.2.1, hle h.2.2.2.2.2.2.2.1,
     hle h.2.2.2.2.2.2.2.2⟩
 
-/-- **Structural Obstruction to Internal Strong `C₆`-Connectedness (Gao–Zhao Theorem 1.4 core):**
+/-- **Structural Obstruction to Internal Strong `C₆`-Connectedness (Corollary of Lemma 2.1 + `C₄`-freeness):**
 In any `C₄`-free graph `G`, every subgraph `H ≤ G` satisfying the internal strong `C₆` condition
 (`IsInternallyStronglyC6Connected H`) has at most `1` edge (`e(H) ≤ 1`).
 Indeed, any two distinct edges of `H` would lie on a `C₄` or `C₆` in `H`, and any `C₆` in `H`
@@ -1476,10 +1481,12 @@ theorem biaffineGraph_no_fourCycle (q : ℕ) [Fact (Nat.Prime q)]
     have hp : v₁.2 ≠ v₃.2 := fun h => hv13 (Prod.ext (hv1_t.trans h23'.2.1.symm) h)
     exact no_two_lines_two_points q hl hp eq12 h41'.2.2 h23'.2.2 h34'.2.2
 
-/-- **Gao–Zhao Negative Theorem (Theorem 1.4 / Section 3, arXiv:2610.34307):**
+/-- **Biaffine Obstruction to Internal Strong `C₆`-Connectedness (Corollary of Lemma 2.1 + `C₄`-freeness of `B_Q`, Gao–Zhao §2, arXiv:2610.34307):**
 For every prime `q`, the biaffine incidence graph `biaffineGraph q` has `N = 2 q²` vertices
 and `q³` edges (`e(G) = (N/2)^(3/2)`), yet every internally strongly `C₆`-connected subgraph
-`H ≤ biaffineGraph q` has at most `1` edge (`e(H) ≤ 1`). -/
+`H ≤ biaffineGraph q` has at most `1` edge (`e(H) ≤ 1`).
+(Obstructs the internal strong `C₆` variant at `β = 1/2`; distinct from Li Theorem 1.4's
+random shift-lift obstruction for `β ≥ 1/3`.) -/
 theorem internal_strong_c6_biaffine_obstruction (q : ℕ) [Fact (Nat.Prime q)] :
     Fintype.card (BiaffineVertex q) = 2 * q ^ 2 ∧
     (biaffineGraph q).edgeFinset.card = q ^ 3 ∧
@@ -1490,20 +1497,23 @@ theorem internal_strong_c6_biaffine_obstruction (q : ℕ) [Fact (Nat.Prime q)] :
       card_edgeFinset_le_one_of_internallyStronglyC6_of_no_C4 hle
         (biaffineGraph_no_fourCycle q) hStrong⟩
 
-/-- **Complete Resolution of Erdős Problem #584 (Duke–Erdős–Rödl 1982/1984, JSP-000473):**
-Combines all positive and negative results for `JSP-000473`:
+/-- **2026 Resolution Package for Erdős Problem #584 (JSP-000473, Gao–Zhao arXiv:2610.34307 & Li arXiv:2606.06522):**
+Packages the 2026 positive and negative results for `JSP-000473` (rather than a literal
+clause-by-clause formalization of the 1984 fixed-`δ` internal strong `H₁` statement):
 1. **Internal `C₆`-Connected Subgraph of Cubic Density (`gao_zhao_internal_c6_connected_subgraph`):**
-   Every `n`-vertex simple graph `G` with `e(G) > 0` and `512 n⁴ ≤ e(G)³` contains an internally
-   `C₆`-connected subgraph `H₁ ≤ G` with `e(G)³ ≤ 256 n⁴ e(H₁)`.
+   Weakened quantitative version of Gao–Zhao Proposition 2.6: every `n`-vertex simple graph `G`
+   with `e(G) > 0` and `512 n⁴ ≤ e(G)³` contains an internally `C₆`-connected subgraph `H₁ ≤ G`
+   with `e(G)³ ≤ 256 n⁴ e(H₁)`.
 2. **Internal `C₈`-Connected Subgraph of Cubic Density (`dense_internal_c8_connected_subgraph`):**
-   Every such graph `G` contains an internally `C₈`-connected subgraph `H₂ ≤ G` with
-   `e(G)³ ≤ 256 n⁴ e(H₂)`, improving the Duke–Erdős–Rödl `δ¹² n²` bound to `Ω(δ³ n²)`.
+   Corollary of Proposition 2.6: every such graph `G` contains an internally `C₈`-connected
+   subgraph `H₂ ≤ G` with `e(G)³ ≤ 256 n⁴ e(H₂)`, improving the Duke–Erdős–Rödl `δ¹² n²` bound to `Ω(δ³ n²)`.
 3. **Ambient Strong `C₆` Subgraph of Cubic Density (`li_ambient_strong_c6_subgraph`):**
-   Every such graph `G` contains a subgraph `H₁' ≤ G` with `e(G)³ ≤ 256 n⁴ e(H₁')` that is
-   ambiently strongly `C₆`-connected in `G` (including the adjacent-edge `C₄` property in `G`).
-4. **Failure of Internal Strong `C₆` (`internal_strong_c6_biaffine_obstruction`):**
-   For every prime `q`, `biaffineGraph q` has `2 q²` vertices and `q³` edges, yet every
-   internally strongly `C₆`-connected subgraph `H ≤ biaffineGraph q` has `e(H) ≤ 1`. -/
+   Li Definition 1.1(ii) proved in Gao–Zhao's quantitative range: every such graph `G` contains
+   a subgraph `H₁' ≤ G` with `e(G)³ ≤ 256 n⁴ e(H₁')` that is ambiently strongly `C₆`-connected in `G`.
+4. **Biaffine Obstruction to Internal Strong `C₆` (`internal_strong_c6_biaffine_obstruction`):**
+   Corollary of Lemma 2.1 + `C₄`-freeness of `B_Q`: for every prime `q`, `biaffineGraph q` has
+   `2 q²` vertices and `q³` edges, yet every internally strongly `C₆`-connected subgraph
+   `H ≤ biaffineGraph q` has `e(H) ≤ 1`. -/
 theorem erdos_584_duke_erdos_rodl_resolution :
     (∀ {W : Type*} [Fintype W] [DecidableEq W] (G : SimpleGraph W) [DecidableRel G.Adj],
       0 < G.edgeFinset.card → 512 * (Fintype.card W) ^ 4 ≤ G.edgeFinset.card ^ 3 →
